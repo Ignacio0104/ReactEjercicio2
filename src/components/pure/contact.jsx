@@ -31,7 +31,8 @@ const ContactComponent = (props) => {
     function handleConnection(e)
     {
         e.preventDefault();
-        //Funcion para actualizar
+        let newStatus=!props.contact.connected;
+        props.update(props.contactId,newStatus);
     }
 
     function ShowConnectionButton(){
@@ -61,7 +62,6 @@ const ContactComponent = (props) => {
                 <i className='bi-trash' 
                 style={{color:"tomato",padding:"10px" ,fontSize:"20px"}}
                 onClick={()=>props.delete(props.contactId)}></i>
-                {console.log(`${props.contact.name} tiene el id ${props.contactId}`)}
             </td>
         </tr>
     );

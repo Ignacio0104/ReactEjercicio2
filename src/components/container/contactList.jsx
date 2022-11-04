@@ -1,6 +1,7 @@
 import React, {useState,useEffect} from 'react'
 import { Contact } from '../../models/contacto.class'
 import ContactComponent from '../pure/contact'
+import ContactForm from '../pure/forms/contactForm';
 
 export default function ContactList() {
   const contactOne = new Contact("Ignacio","Smirlian","ignacio@gmail.com",1513452314,true);
@@ -10,11 +11,12 @@ export default function ContactList() {
   const contactFive = new Contact("Santiago","Vazquez","vazquez@gmail.com",63512345,false);
 
   const [contacts, setContacts] = useState([contactOne,contactTwo,contactThree,contactFour,contactFive]);
+  const [altaContacto, setAltaContacto] = useState(false);
 
   useEffect(() => {
-    console.log("Contact list has been modified")
+    //console.log("Contact list has been modified")
     return () => {
-      console.log("TaskList component is going to be unmount");
+      //console.log("TaskList component is going to be unmount");
     }
   }, [contacts])
 
@@ -23,6 +25,56 @@ export default function ContactList() {
       setContacts(
         contacts.filter((contact,i) => i !== index)
       );
+  }
+
+  function updateStatus(index,boolean)
+  {
+    const updatedContacts = contacts.map((contact, i) => {
+      if (i === index) {
+        contact.connected=boolean;
+      }
+        return contact;
+    });
+    setContacts(updatedContacts);
+  }
+
+
+  function addContact(contacto)
+  {
+    setContacts(prevState=>[...prevState,contacto]);
+    setAltaContacto(!altaContacto);
+  }
+
+  function MostrarOcultarForm()
+  {
+    if(altaContacto)
+    {
+      return(
+        <ContactForm add={addContact}></ContactForm>
+      )
+    }     
+  }
+
+  function LoadHeaders()
+  {
+    if(contacts.length>0)
+    {
+      return(
+        <tr>
+        <th scope='col'>Name</th>
+        <th scope='col'>Email</th>
+        <th scope='col'>Phone</th>
+        <th scope='col'>Status</th>
+        <th scope='col'>Action</th>
+      </tr>
+      )
+    }else{
+      return(
+        <tr>
+          <h3>No contacts</h3>
+        </tr>
+      )
+    }
   }
   
   return (
@@ -39,31 +91,27 @@ export default function ContactList() {
             <div className='card-body' data-mdb-perfect-scrollbar="true" style={{position : "relative",height: "400px"}}>
                 <table>
                     <thead>
-                        <tr>
-                            <th scope='col'>Name</th>
-                            <th scope='col'>Email</th>
-                            <th scope='col'>Phone</th>
-                            <th scope='col'>Status</th>
-                            <th scope='col'>Action</th>
-                        </tr>
+                      {LoadHeaders()}
                     </thead>
                     <tbody>
                         {/*TO DO iteracion*/}
                         {contacts.map((contact,index)=>
                             {
-                              console.log(contact);
                                 return (
                                     <ContactComponent key={index} contactId={index} 
-                                    delete={deleteContact} contact={contact}>
-                                      
+                                    delete={deleteContact} contact={contact}
+                                    update={updateStatus}>                                     
                                     </ContactComponent>
                                 );
                             }
                         )}
                     </tbody>
                 </table>
-            </div>
-            {/*<TaskForm></TaskForm>*/}
+                <button onClick={()=>setAltaContacto(!altaContacto)}>
+                    {altaContacto ? "Cerrar Formularo" : "Crear Contacto"}     
+                </button>
+            </div>                    
+           {MostrarOcultarForm()}
         </div>
     </div>
 </div>
